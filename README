@@ -1,49 +1,21 @@
-This is your new Play application
-=================================
+Il progetto utilizza il framework Play, Scala e Swagger per offire una semplice api per vedere alcuni dati su grafici Google Graph. Abbiamo utilizzato l'esempio Google Chart
 
-This file will be packaged with your application when using `activator dist`.
+https://developers.google.com/chart/interactive/docs/gallery/columnchart
 
-There are several demonstration files available in this template.
+Abbiamo chiamato 2 API esterne http://api.openweathermap.org/data/2.5/weather e http://query.yahooapis.com/v1/public/yql
 
-Controllers
-===========
+per recuperare i dati da mostrare nei due grafici. I dati sono salvati su di un database Sqlite, al quale accediamo con una semplice API REST.
 
-- HomeController.scala:
+Clonate il codice e digitate
 
-  Shows how to handle simple HTTP requests.
+./activator run
 
-- AsyncController.scala:
+andate con il vostro browser all'indirizzo http://127.0.0.1:9000/ per vedere la documentazione di Swagger per l'API oppure http://127.0.0.1:9000/graficometeo http://127.0.0.1:9000/graficoazioni per vedere i grafici
 
-  Shows how to do asynchronous programming when handling a request.
+Potete aggiungere dati attraverso la Swagger UI tramite operazione POST all'indirizzo http://127.0.0.1:9000/#!/serietemporale/mandaDaNome impostando come nome AAPL e come body { "etichetta": "2016-05-14T06:40:35Z",
+"valore": "100" }
 
-- CountController.scala:
+questo genera una richiesta curl ed esegue l'equivalente di curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{ "etichetta": "2016-05-14T06:40:35Z",
+"valore": "100" }' 'http://localhost:9000/serietemporale/AAPL'
 
-  Shows how to inject a component into a controller and use the component when
-  handling requests.
-
-Components
-==========
-
-- Module.scala:
-
-  Shows how to use Guice to bind all the components needed by your application.
-
-- Counter.scala:
-
-  An example of a component that contains state, in this case a simple counter.
-
-- ApplicationTimer.scala:
-
-  An example of a component that starts when the application starts and stops
-  when the application stops.
-
-Filters
-=======
-
-- Filters.scala:
-
-  Creates the list of HTTP filters used by your application.
-
-- ExampleFilter.scala
-
-  A simple filter that adds a header to every response.
+Questo modificherà il grafico
