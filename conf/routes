@@ -1,0 +1,17 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+GET /graficometeo    			controllers.HomeController.meteo
+GET /graficoazioni    			controllers.HomeController.azioni
+GET /							controllers.HomeController.swagger
+GET /swagger.json           	controllers.ApiHelpController.getResources
+
+# Map static resources from the /public folder to the /assets URL path , required for swagger
+GET /assets/*file 				controllers.Assets.at(path="/public", file)
+
+GET /serietemporale/:nome			controllers.ApiSerieTemporale.prendiDaNome(nome)
+POST /serietemporale/:nome			controllers.ApiSerieTemporale.mandaDaNome(nome)
+POST /meteo/:nome				controllers.ApiMeteo.aggiungiMeteo(nome)
+POST /azioni/:nome				controllers.ApiAzioni.aggiungiAzione(nome)
+

@@ -1,0 +1,70 @@
+@* examplechart Template File *@
+<html>
+<head>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+
+<script>
+	google.charts.load('current', {
+		packages : [ 'corechart' ]
+	});
+	google.charts.setOnLoadCallback(drawStacked);
+	var jsonData
+	var mapped = {}; 
+	function drawStacked() {
+		jsonData = {
+			"cols" : [ {
+				"label" : "Data&ora",
+				"type" : "datetime"
+			}, {
+				"label" : "AAPL",
+				"type" : "number"
+			},
+			{
+				"label" : "MSFT",
+				"type" : "number"
+			}
+			],
+			"rows" : [ ]
+		}
+		var googleData = new google.visualization.DataTable(jsonData);
+
+		var options = {
+			title : 'Prezzo azioni AAPL e MSFT',
+			 series: {
+          0: {targetAxisIndex: 0},
+          1: {targetAxisIndex: 1}
+        },
+        vAxes: {
+          0: {title: 'AAPL' , ticks:[0,25,50,100,150,200]},
+          1: {title: 'MSFT', ticks:[0,25,50,100,150,200] }
+        }, 
+			curveType: 'function',		
+			intervals: { 'style':'line' },
+			legend: 'none',
+			height: 600
+			
+		};
+
+		var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+		chart.draw(googleData, options);
+		
+		@getrestdata("AAPL","MSFT"){ date => @date}{ value => @value }
+			
+	
+		getData();
+		setInterval( getData , 5000);
+				
+	}
+</script>
+
+</head>
+<body>
+<div id="chart_div"></div>
+<div id="swagger">
+<a href="@routes.HomeController.swagger" >
+<img src='@routes.Assets.at("lib/swagger-ui/images/favicon-32x32.png")' style="vertical-align:middle;width:32px;height:32px;"></a>
+<a href="@routes.HomeController.swagger" >Swagger</a>
+</div>
+</body>
+</html>

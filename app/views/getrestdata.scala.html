@@ -1,0 +1,59 @@
+@* commonjs Template File *@
+@(serieTemporale1: String,serieTemporale2:String)(dateArithmetic:String => Html)(valueArithmetic:String => Html)
+
+	function getData() {
+			var series1 = "@serieTemporale1"
+			var series2 = "@serieTemporale2"
+			jsonData.rows.length = 0;
+
+			var response1
+			var response2
+			var call1 = $.getJSON("/serietemporale/" + series1, function(data) { response1=data } );
+			var call2 = $.getJSON("/serietemporale/" + series2, function(data) { response2=data } );
+			$.when(call1, call2).then(function () {
+
+				var NA=-999999
+				var collect = []; 
+				for (var i = 0; i < response1.length; i++) {
+					var roundedTime =response1[i].etichetta
+    				collect[ roundedTime ] = [ @valueArithmetic("response1[i].valore") , NA ] ;
+				}
+				for (var i = 0; i < response2.length; i++) {
+					var roundedTime =response2[i].etichetta
+					if ( typeof collect[ roundedTime ] === 'undefined' ) {
+    					collect[roundedTime] = [ NA , @valueArithmetic("response2[i].valore") ] ;
+					} else {
+    					collect[roundedTime][1]= @valueArithmetic("response2[i].valore") ;
+					}
+				} 
+
+				/*
+				unisce i dati. E se un punto non è impostato per un dato periodo usa il valore precedente.
+				*/
+				var first=NA
+				var second=NA
+				var orderDate = Object.keys(collect).sort();
+				for(var d in orderDate) {
+					var labelIndex = orderDate[d]
+					if (collect[labelIndex][0] != NA  ) first = collect[labelIndex][0]
+					if (collect[labelIndex][1] != NA  ) second = collect[labelIndex][1]
+					if ( first != NA && second != NA ) {	
+						mapped[labelIndex]=[ first , second ] 
+					}
+				}
+
+				jsonData.rows.length = 0;
+
+				for(var key in mapped ) {
+		  	        var value = mapped[ key ]
+		  	        var c =  {"v":new Date(   @dateArithmetic("key") ) }
+  	        		var v = { "v": value[0]  }
+  	        		var v2 = { "v": value[1]  }
+					jsonData.rows.push({ "c" : [ c  , v , v2 ] });
+				}
+
+				console.log(JSON.stringify(jsonData	));
+				chart.draw(googleData, options);
+			});
+		}
+
